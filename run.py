@@ -15,7 +15,17 @@ class BasicPropositions:
     def __repr__(self):
         return f"A.{self.data}"
 
+'''@constraint.add_exactly_one(E)
+@proposition(E)
+class GuessStates:
+    def __init__(self, empty, partial, incorrect, correct):
+        self.empty = empty
+        self.partial = partial
+        self.incorrect = incorrect
+        self.correct = correct
 
+    def __repr__(self):
+        return''' #Is this necessary for the slot propositions???
 # Different classes for propositions are useful because this allows for more dynamic constraint creation
 # for propositions within that class. For example, you can enforce that "at least one" of the propositions
 # that are instances of this class must be true by using a @constraint decorator.
@@ -42,7 +52,7 @@ x = FancyPropositions("x")
 y = FancyPropositions("y")
 z = FancyPropositions("z")#These are examples 
 #Creates propositions for a single guess, should be tweaked if needed for multiple guesses
-'''incorrect = []
+incorrect = []
 empty = []
 partial = []
 correct = []
@@ -55,7 +65,7 @@ for x in range(5):
 print(incorrect)
 print(empty)
 print(partial)
-print(correct)'''
+print(correct)
 
 
 # Build an example full theory for your setting and return it.
