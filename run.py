@@ -15,58 +15,40 @@ class BasicPropositions:
     def __repr__(self):
         return f"A.{self.data}"
 
-'''@constraint.add_exactly_one(E)
+ROW = [1, 2, 3, 4, 5]
+COL = [1, 2, 3, 4, 5, 6]
+STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
+
+PROPOSITIONS = []
+
+class Unique(object):
+    def __hash__(self):
+        return hash(str(self))
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+    def __repr__(self):
+        return str(self)
+    def __str__(self):
+        assert False, "You need to define the __str__ function on a proposition class"
+
+
 @proposition(E)
 class GuessStates:
-    def __init__(self, empty, partial, incorrect, correct):
-        self.empty = empty
-        self.partial = partial
-        self.incorrect = incorrect
-        self.correct = correct
+    def __init__(self, row, col, status):
+        self.row = row
+        self.col = col
+        self.status = status
 
     def __repr__(self):
-        return''' #Is this necessary for the slot propositions???
-# Different classes for propositions are useful because this allows for more dynamic constraint creation
-# for propositions within that class. For example, you can enforce that "at least one" of the propositions
-# that are instances of this class must be true by using a @constraint decorator.
-# other options include: at most one, exactly one, at most k, and implies all.
-# For a complete module reference, see https://bauhaus.readthedocs.io/en/latest/bauhaus.html
-@constraint.at_least_one(E)
-@proposition(E)
-class FancyPropositions:
+        return f"slot({self.row},{self.col})=>{self.status}"
 
-    def __init__(self, data):
-        self.data = data
 
-    def __repr__(self):
-        return f"A.{self.data}"
+#CONSTRAINTS
 
-# Call your variables whatever you want
-a = BasicPropositions("a")
-b = BasicPropositions("b")   
-c = BasicPropositions("c")
-d = BasicPropositions("d")
-e = BasicPropositions("e")
-# At least one of these will be true
-x = FancyPropositions("x")
-y = FancyPropositions("y")
-z = FancyPropositions("z")#These are examples 
-#Creates propositions for a single guess, should be tweaked if needed for multiple guesses
-incorrect = []
-empty = []
-partial = []
-correct = []
-for x in range(5):
-        incorrect.append(BasicPropositions("i: " +  str(x)))
-        empty.append(BasicPropositions("e: " +  str(x)))
-        partial.append(BasicPropositions("p: " +  str(x)))
-        correct.append(BasicPropositions("c: " +  str(x)))
-
-print(incorrect)
-print(empty)
-print(partial)
-print(correct)
-
+#For each slot, there is exactly one status applied to it
+for row in ROW:
+    for col in COL:
+        constraint.add_exactly_one(E, [GuessStates(row, col, status) for status in STATUS])
 
 # Build an example full theory for your setting and return it.
 #
