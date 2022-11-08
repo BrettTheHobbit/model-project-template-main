@@ -31,24 +31,53 @@ class Unique(object):
     def __str__(self):
         assert False, "You need to define the __str__ function on a proposition class"
 
-
+#Contains the information about a letters location, status and the char representation on the wordle board
 @proposition(E)
-class GuessStates:
-    def __init__(self, row, col, status):
+class Letter: 
+    def __init__(self, row, col, status, char):
         self.row = row
         self.col = col
         self.status = status
+        self.char = char
 
     def __repr__(self):
         return f"slot({self.row},{self.col})=>{self.status}"
 
 
+#Word class, contains five letter classes (same row, diff col)
+@proposition(E)
+class Word:
+    def __init__(self, letter):
+        self.word = letter
+        self.letter1 = letter[0]
+        self.letter2 = letter[1]
+        self.letter3 = letter[2]
+        self.letter4 = letter[3]
+        self.letter5 = letter[4]
+
+    def __repr__(self):
+        return f" The word is: " + str(self.letter1.char) + str(self.letter2.char) + str(self.letter3.char) + str(self.letter4.char) + str(self.letter5.char)
+
+    #Returns true if a guess is a good guess, false if guess is a bad guess
+    def good_guess():
+        #A guess is a good guess IF (defines what a good guess is)
+        pass
+        
 #CONSTRAINTS
 
 #For each slot, there is exactly one status applied to it
 for row in ROW:
     for col in COL:
-        constraint.add_exactly_one(E, [GuessStates(row, col, status) for status in STATUS])
+        constraint.add_exactly_one(E, [Letter(row, col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
+
+#There is at least one word (guess) that is correct completely
+
+#For each guess, all five letters are in the same row.
+
+#A guess can only be good or bad (G(x) v B(x)^~(G(x)^B(x))) [NEEDS A CLASS FOR A GOOD GUESS AND A BAD GUESS]
+
+#If letter (at row col) is correct guess, then that implies all words with the same letter in the same slot will be possible answers
+
 
 # Build an example full theory for your setting and return it.
 #
