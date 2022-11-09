@@ -16,8 +16,8 @@ class Wordle_board:
     
     file = ""
     wordlist = []
-    correct_word = ""
-    guesses = []
+    correct_word = "bcaoa"
+    guesses = ["aaaoo"]
     guess_list = []
     guess_data = []
     
@@ -52,7 +52,7 @@ class Wordle_board:
         #print(len(self.wordlist))
         
         
-        self.correct_word = self.wordlist[random.randint(0, len(self.wordlist)-1)]
+        #self.correct_word = self.wordlist[random.randint(0, len(self.wordlist)-1)]
         print(self.correct_word)
         
     
@@ -103,18 +103,55 @@ class Wordle_board:
         #print(self.guess_data)
         
         for i in range(len(self.guesses)):
+            correct = self.correct_word
             print(self.guesses[i])
-            for j in range(5):
+            for j in range(len(self.guesses[i])):
                 #print(self.guesses[i][j])
                 if self.guesses[i][j] in self.correct_word[j]:
                     self.guess_data[i].append("C")
                     continue
                 
                 if self.guesses[i][j] in self.correct_word:
+                    if self.guesses[i].count(self.guesses[i][j]) > 1:
+                        self.guess_data[i].append(ord(self.guesses[i][j]))
+                        continue
                     self.guess_data[i].append("P")
                     continue
                 
                 self.guess_data[i].append("I")
+            
+            dupes = False
+            dupe_dict = {}
+            for j in range(len(self.guesses[i])):
+                if isinstance(self.guess_data[i][j], int):
+                    if self.guess_data[i][j] in dupe_dict:
+                        dupe_dict[self.guess_data[i][j]] += 1
+                        print(dupe_dict[self.guess_data[i][j]])
+                    else:
+                        dupe_dict.update({self.guess_data[i][j]:1})
+                        print("no")
+                    dupes = True
+                    
+            for j in range(len(self.guesses[i])):
+                if self.guesses[i][j] in self.correct_word[j] and ord(self.guesses[i][j]) in dupe_dict:
+                    dupe_dict[ord(self.guesses[i][j])] -= 1
+            print(dupes)
+            
+            print(dupe_dict)
+            
+            for key in dupe_dict:
+                while key in self.guess_data[i]:
+                    if dupe_dict[key] > 0:
+                        self.guess_data[i][self.guess_data[i].index(key)] = "P"
+                        dupe_dict[key] -= 1
+                        continue
+                    self.guess_data[i][self.guess_data[i].index(key)] = "I"
+                    
+                
+                print(key)
+                print(dupe_dict[key])
+                #print(self.guess_data[i].index(key))
+                print(key in self.guess_data[i])
                 
             
     """
@@ -130,12 +167,13 @@ class Wordle_board:
         
         for i in self.guess_data:
             print(i)
+        print(self.correct_word)
                 
         
         
         
 w1 = Wordle_board("words.txt", 15)
-w1.make_guess(5)
+#w1.make_guess(5)
 w1.data()
 w1.display()
 input()
