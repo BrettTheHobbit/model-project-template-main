@@ -4,7 +4,11 @@ Our project uses a logical model to determine the possible answers left in a wor
 
 ## Wordle Rules
 
-Wordle is an online guessing game in which you want to guess a selected five letter word.
+Wordle is an online guessing game in which you want to guess a selected five letter word within five guess.
+
+For every guess, information is returned back to the player, telling the player if the letter is incorrect (shown in gray), if the letter is in the word but in the wrong spot (shown in yellow) and if a letter is in the wrod in the right spot (shown in green).
+
+You win the game if you can guess the word within six guesses.
 
 ## Structure
 
