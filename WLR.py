@@ -1,5 +1,4 @@
 import random
-from sty import bg, ef, fg, rs
 
 
 class Wordle_board:
@@ -11,13 +10,15 @@ class Wordle_board:
     guesses - guesses made
     guess_list - wordlist excluding all the guesses
     guess_data - Data table showing letters that are incorrect, partially correct, or correct
+    
+    guesslist and guesses should logically add up to wordlist
     """
     
     
     file = ""
     wordlist = []
-    correct_word = "bcaoa"
-    guesses = ["aaaoo"]
+    correct_word = ""
+    guesses = []
     guess_list = []
     guess_data = []
     
@@ -51,9 +52,9 @@ class Wordle_board:
         #print(self.wordlist)
         #print(len(self.wordlist))
         
-        
-        #self.correct_word = self.wordlist[random.randint(0, len(self.wordlist)-1)]
-        print(self.correct_word)
+        self.guess_list = self.wordlist.copy()
+        self.correct_word = self.wordlist[random.randint(0, len(self.wordlist)-1)]
+        print("The correct word is: "+self.correct_word)
         
     
         #print(self.wordlist)
@@ -65,10 +66,11 @@ class Wordle_board:
     guess - the amount of guesses you're making
     
     Makes guesses equal to int guess
+    
+    Useless function now
     """
-    def make_guess(self, guess):
+    def auto_guess(self, guess):
         self.guesses = []
-        self.guess_list = self.wordlist.copy()
         
         
         
@@ -135,9 +137,9 @@ class Wordle_board:
             for j in range(len(self.guesses[i])):
                 if self.guesses[i][j] in self.correct_word[j] and ord(self.guesses[i][j]) in dupe_dict:
                     dupe_dict[ord(self.guesses[i][j])] -= 1
-            print(dupes)
+            #print(dupes)
             
-            print(dupe_dict)
+            #print(dupe_dict)
             
             for key in dupe_dict:
                 while key in self.guess_data[i]:
@@ -148,10 +150,10 @@ class Wordle_board:
                     self.guess_data[i][self.guess_data[i].index(key)] = "I"
                     
                 
-                print(key)
-                print(dupe_dict[key])
+                #print(key)
+                #print(dupe_dict[key])
                 #print(self.guess_data[i].index(key))
-                print(key in self.guess_data[i])
+                #print(key in self.guess_data[i])
                 
             
     """
@@ -168,12 +170,57 @@ class Wordle_board:
         for i in self.guess_data:
             print(i)
         print(self.correct_word)
-                
+    
+    
+    """
+    Makes a specific guess with a single string input
+    """
+    def make_guess(self, guess):
+        self.guesses.append(guess)
+        
+        if guess in self.guess_list:
+            self.guess_list.remove(guess)
+            
+    """
+    Returns a list for wordlist
+    """
+    def get_wordlist(self):
+        return self.wordlist.copy()
+    
+    
+    """
+    Returns a String as correct word
+    """    
+    def get_correct_word(self):
+        return self.correct_word[:]
+    
+    
+    """
+    Returns a list for guesses
+    """    
+    def get_guesses(self):
+        return self.guesses.copy()
+    
+    
+    """
+    Returns a list for guess list
+    """    
+    def get_guess_list(self):
+        return self.guess_list.copy()
+    
+    
+    """
+    Returns a 2d list for data
+    """
+    def get_guess_data(self):
+        return self.guess_data.copy()   
         
         
         
 w1 = Wordle_board("words.txt", 15)
-#w1.make_guess(5)
+w1.auto_guess(5)
+w1.make_guess("apple")
+w1.make_guess("orang")
 w1.data()
 w1.display()
 input()
