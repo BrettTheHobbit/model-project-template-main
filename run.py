@@ -1,6 +1,8 @@
 
 from bauhaus import Encoding, proposition, constraint
 from bauhaus.utils import count_solutions, likelihood
+from nnf import config
+config.sat_backend = "kissat"
 
 # Encoding that will store all of your constraints
 E = Encoding()
