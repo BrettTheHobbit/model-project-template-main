@@ -21,6 +21,7 @@ class Wordle_board:
     guesses = []
     guess_list = []
     guess_data = []
+    letter_list = []
     
     
     
@@ -113,7 +114,7 @@ class Wordle_board:
                 self.guess_data[i] = ["E","E","E","E","E"]
                 continue
                 
-            print(self.guesses[i])
+            #print(self.guesses[i])
             for j in range(len(self.guesses[i])):
                 #print(self.guesses[i][j])
                 if self.guesses[i][j] in self.correct_word[j]:
@@ -160,6 +161,16 @@ class Wordle_board:
                 #print(self.guess_data[i].index(key))
                 #print(key in self.guess_data[i])
                 
+        x = []
+        
+        for i in self.guess_list:
+            for j in i:
+                if j in x:
+                    continue
+                x.append(j)
+                
+        self.letter_list = sorted(x)
+        
             
     """
     Displays data
@@ -220,29 +231,58 @@ class Wordle_board:
     Returns a 2d list for data
     """
     def get_guess_data(self):
-        return self.guess_data.copy() 
+        return self.guess_data.copy()
+    
+    
+    """
+    Returns a list of letters
+    """
+    def get_letter_list(self):
+        return self.letter_list.copy()
     
     def test_case_1(self):
         self.wordlist = ['kiddo', 'malam', 'akoia', 'pauas', 'poise', 'scote', 'abysm', 'privy', 'skosh', 'newts', 'bovid', 'hunch', 'dahis', 'coles', 'memes']
         self.guess_list = self.get_wordlist()
         self.correct_word = 'memes'
     
-    def check_letter(self, x, y):
+    def check_letter(self, y, x):
         x -= 1
         y -= 1
-        if self.guesses[x][y] == " ":
+        if self.guesses[y][x] == " ":
             return "empty"
         
-        return self.guesses[x][y]
+        return self.guesses[y][x]
+    
+    """
+    Takes in array of strings, removes from guess_list
+    """
+    def remove_invalid(self, invalids):
+        if type(invalids) != list:
+            print("Not a list")
+            return
+        
+        for i in invalids:
+            if i in self.guess_list:
+                self.guess_list.remove(i)
+            else:
+                print("not in list")
+    
+    
+    
+    
+    
+    
         
 w1 = Wordle_board("words.txt", 15)
 #w1.auto_guess(5)
 #w1.make_guess("apple")
 #w1.make_guess("orang")
 w1.test_case_1()
-w1.auto_guess(5)
+#w1.auto_guess(5)
 w1.display()
 print(w1.get_guesses())
+w1.remove_invalid(["kiddo", "memes"])
 print(w1.get_wordlist())
-print(w1.check_letter(6, 1))
+print(w1.get_guess_list())
+print(w1.check_letter(1, 1))
 input()
