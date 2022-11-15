@@ -34,6 +34,10 @@ class Wordle_board:
     """
     def __init__(self, file, listsize):
         self.file = file
+        guess_limit = 6
+        
+        for i in range(0, guess_limit):
+            self.guesses.append("     ")
         
         f = open(self.file, "r")
         
@@ -105,7 +109,10 @@ class Wordle_board:
         #print(self.guess_data)
         
         for i in range(len(self.guesses)):
-            correct = self.correct_word
+            if self.guesses[i] == "     ":
+                self.guess_data[i] = ["E","E","E","E","E"]
+                continue
+                
             print(self.guesses[i])
             for j in range(len(self.guesses[i])):
                 #print(self.guesses[i][j])
@@ -122,7 +129,6 @@ class Wordle_board:
                 
                 self.guess_data[i].append("I")
             
-            dupes = False
             dupe_dict = {}
             for j in range(len(self.guesses[i])):
                 if isinstance(self.guess_data[i][j], int):
@@ -132,7 +138,6 @@ class Wordle_board:
                     else:
                         dupe_dict.update({self.guess_data[i][j]:1})
                         print("no")
-                    dupes = True
                     
             for j in range(len(self.guesses[i])):
                 if self.guesses[i][j] in self.correct_word[j] and ord(self.guesses[i][j]) in dupe_dict:
@@ -176,7 +181,7 @@ class Wordle_board:
     Makes a specific guess with a single string input
     """
     def make_guess(self, guess):
-        self.guesses.append(guess)
+        self.guesses[self.guesses.index("     ")] = guess
         
         if guess in self.guess_list:
             self.guess_list.remove(guess)
@@ -213,14 +218,21 @@ class Wordle_board:
     Returns a 2d list for data
     """
     def get_guess_data(self):
-        return self.guess_data.copy()   
+        return self.guess_data.copy() 
+    
+    def test_case_1(self):
+        self.wordlist = ['kiddo', 'malam', 'akoia', 'pauas', 'poise', 'scote', 'abysm', 'privy', 'skosh', 'newts', 'bovid', 'hunch', 'dahis', 'coles', 'memes']
+        self.correct_word = 'memes'
         
         
         
 w1 = Wordle_board("words.txt", 15)
-w1.auto_guess(5)
-w1.make_guess("apple")
-w1.make_guess("orang")
+#w1.auto_guess(5)
+#w1.make_guess("apple")
+#w1.make_guess("orang")
+w1.test_case_1()
 w1.data()
 w1.display()
+print(w1.get_guesses())
+print(w1.get_wordlist())
 input()
