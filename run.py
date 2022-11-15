@@ -1,8 +1,7 @@
 
 from bauhaus import Encoding, proposition, constraint
 from bauhaus.utils import count_solutions, likelihood
-from nnf import config
-config.sat_backend = "kissat"
+import WLR
 
 # Encoding that will store all of your constraints
 E = Encoding()
@@ -20,6 +19,7 @@ class BasicPropositions:
 ROW = [1, 2, 3, 4, 5]
 COL = [1, 2, 3, 4, 5, 6]
 STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
+BOARD = WLR.Wordle_board("words.txt", 15)
 
 PROPOSITIONS = []
 
@@ -36,11 +36,9 @@ class Unique(object):
 #Contains the information about a letters location, status and the char representation on the wordle board
 @proposition(E)
 class Letter: 
-    def __init__(self, row, col, status, char):
-        self.row = row
+    def __init__(self, col, status):
         self.col = col
         self.status = status
-        self.char = char
 
     def __repr__(self):
         return f"slot({self.row},{self.col})=>{self.status}"
@@ -49,28 +47,30 @@ class Letter:
 #Word class, contains five letter classes (same row, diff col)
 @proposition(E)
 class Word:
-    def __init__(self, letter):
-        self.word = letter
-        self.letter1 = letter[0]
-        self.letter2 = letter[1]
-        self.letter3 = letter[2]
-        self.letter4 = letter[3]
-        self.letter5 = letter[4]
+    def __init__(self, row, word, pos_guess):
+        self.row = row
+        self.word = word
+        self.pos_guess = pos_guess
 
     def __repr__(self):
-        return f" The word is: " + str(self.letter1.char) + str(self.letter2.char) + str(self.letter3.char) + str(self.letter4.char) + str(self.letter5.char)
+        return f" The word is: " + str(self.word) + ". Guess status: " + str(self.pos_guess)
 
-    #Returns true if a guess is a good guess, false if guess is a bad guess
-    def good_guess():
-        #A guess is a good guess IF (defines what a good guess is)
-        pass
         
 #CONSTRAINTS
 
 #For each slot, there is exactly one status applied to it
+for col in COL:
+    constraint.add_at_most_one(E, [Letter(col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
+
+#For incorrect guesses
 for row in ROW:
-    for col in COL:
-        constraint.add_exactly_one(E, [Letter(row, col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
+    for word in WORD:
+        for col in COL:
+            E.add_constraint(Word(row,word,pos_guess) >> Letter(col,STATUS[1])) #basically somehow we change pos_guess to false and then we remove from the wordbank
+            #E.add_constraint(Letter(row, col, STATUS[1]) >> Word(words, False))#NEEDS TO BE UPDATED BUT IS A GOOD START
+#For partially correct guesses
+
+#For correct guesses
 
 #There is at least one word (guess) that is correct completely
 
