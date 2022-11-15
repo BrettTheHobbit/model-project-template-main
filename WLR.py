@@ -56,9 +56,11 @@ class Wordle_board:
         #print(self.wordlist)
         #print(len(self.wordlist))
         
-        self.guess_list = self.wordlist.copy()
+        self.guess_list = self.get_wordlist()
         self.correct_word = self.wordlist[random.randint(0, len(self.wordlist)-1)]
         print("The correct word is: "+self.correct_word)
+        
+        self.data()
         
     
         #print(self.wordlist)
@@ -74,21 +76,19 @@ class Wordle_board:
     Useless function now
     """
     def auto_guess(self, guess):
-        self.guesses = []
         
-        
-        
-        while (len(self.guesses) < guess):
+        for i in range(0, guess):
             guess_pos = random.randint(0, len(self.guess_list)-1)
             candidate_guess = self.guess_list[guess_pos]
             if candidate_guess == self.correct_word:
                 continue
-            self.guesses.append(candidate_guess)
-            self.guess_list.pop(guess_pos)
+            self.make_guess(candidate_guess)
         
         print(self.wordlist)
         print(self.guess_list)
         print(self.guesses)
+        
+        self.data()
         
     
     """
@@ -185,6 +185,8 @@ class Wordle_board:
         
         if guess in self.guess_list:
             self.guess_list.remove(guess)
+        self.data()
+        
             
     """
     Returns a list for wordlist
@@ -222,17 +224,25 @@ class Wordle_board:
     
     def test_case_1(self):
         self.wordlist = ['kiddo', 'malam', 'akoia', 'pauas', 'poise', 'scote', 'abysm', 'privy', 'skosh', 'newts', 'bovid', 'hunch', 'dahis', 'coles', 'memes']
+        self.guess_list = self.get_wordlist()
         self.correct_word = 'memes'
+    
+    def check_letter(self, x, y):
+        x -= 1
+        y -= 1
+        if self.guesses[x][y] == " ":
+            return "empty"
         
-        
+        return self.guesses[x][y]
         
 w1 = Wordle_board("words.txt", 15)
 #w1.auto_guess(5)
 #w1.make_guess("apple")
 #w1.make_guess("orang")
 w1.test_case_1()
-w1.data()
+w1.auto_guess(5)
 w1.display()
 print(w1.get_guesses())
 print(w1.get_wordlist())
+print(w1.check_letter(6, 1))
 input()
