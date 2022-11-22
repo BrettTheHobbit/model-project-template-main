@@ -36,7 +36,8 @@ class Unique(object):
 #Contains the information about a letters location, status and the char representation on the wordle board
 @proposition(E)
 class Letter: 
-    def __init__(self, col, status):
+    def __init__(self, row, col, status):
+        self.row = row
         self.col = col
         self.status = status
 
@@ -44,11 +45,17 @@ class Letter:
         return f"slot({self.row},{self.col})=>{self.status}"
 
 
-#Word class, contains five letter classes (same row, diff col)
+@proposition(E)
+class Guess:
+    def __init__(self, row, guess, isWord):
+        self.row = row
+        self.guess = guess#Is a collection of five letter classes
+        self.isWord = isWord#is it a word in the wordlist, a guess must match one of the words in the wordlist
+
+#Word class, contains a word from the set of possible words and checks if it matches
 @proposition(E)
 class Word:
-    def __init__(self, row, word, pos_guess):
-        self.row = row
+    def __init__(self, word, pos_guess):
         self.word = word
         self.pos_guess = pos_guess
 
@@ -59,24 +66,27 @@ class Word:
 #CONSTRAINTS
 
 #For each slot, there is exactly one status applied to it
-for col in COL:
-    constraint.add_at_most_one(E, [Letter(col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
+for row in ROW:
+    for col in COL:
+        constraint.add_at_most_one(E, [Letter(col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
+
+for word in BOARD.get_wordlist():
+    constraint.add_at_most_one(E, [Word(word, True)])#Defines all words in the word list to be possible guesses in terms of propositions
 
 #For incorrect guesses
-for row in ROW:
-    for word in WORD:
+
+for word in BOARD.get_guess_list():
+    for row in ROW:
         for col in COL:
-            E.add_constraint(Word(row,word,pos_guess) >> Letter(col,STATUS[1])) #basically somehow we change pos_guess to false and then we remove from the wordbank
-            #E.add_constraint(Letter(row, col, STATUS[1]) >> Word(words, False))#NEEDS TO BE UPDATED BUT IS A GOOD START
+            E.add_constraint((Letter(row, col,STATUS[1])|Letter(row,col,STATUS[2])) >> Word(word,False)) #If a slot is incorrect, then words with that letter
 #For partially correct guesses
 
-#For correct guesses
+#For correct guesses (ANy word in the word list w/o this letter in is should be removed)
 
 #There is at least one word (guess) that is correct completely
 
 #For each guess, all five letters are in the same row.
 
-#A guess can only be good or bad (G(x) v B(x)^~(G(x)^B(x))) [NEEDS A CLASS FOR A GOOD GUESS AND A BAD GUESS]
 
 #If letter (at row col) is correct guess, then that implies all words with the same letter in the same slot will be possible answers
 
