@@ -16,8 +16,8 @@ class BasicPropositions:
     def __repr__(self):
         return f"A.{self.data}"
 
-ROW = [1, 2, 3, 4, 5]
-COL = [1, 2, 3, 4, 5, 6]
+ROW = [1, 2, 3, 4, 5, 6]
+COL = [1, 2, 3, 4, 5]
 STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
 BOARD = WLR.Wordle_board("words.txt", 15)
 
