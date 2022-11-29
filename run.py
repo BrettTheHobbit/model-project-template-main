@@ -90,31 +90,24 @@ class Word:
         
 #BASIC CONSTRAINTS
 
+#Each row maps to every column
+for row in ROW:
+    for col in COL:
+        constraint.add_at_most_one(E, Slots(row, col))
+
 #For each slot, there is exactly one status applied to it
 for row in ROW:
     for col in COL:
-        constraint.add_at_most_one(E, [Letter(col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
+        constraint.add_at_most_one(E, [SlotStatus(row, col, status) for status in STATUS]) #Get char from the char at the index (Fang Lei's class)
 
-for word in BOARD.get_wordlist():
-    constraint.add_at_most_one(E, [Word(word, True)])#Defines all words in the word list to be possible guesses in terms of propositions
+#For each slot, there is exactly one letter applied to it
+for row in ROW:
+    for col in COL:
+        constraint.add_at_most_one(E, [SlotLetter(row, col, letter) for letter in LETTER])
 
-#For incorrect guesses
+#ADVANCED CONSTRAINTS
 
-for word in BOARD.get_guess_list():
-    for row in ROW:
-        for col in COL:
-            E.add_constraint((Letter(row, col,STATUS[1])|Letter(row,col,STATUS[2])) >> Word(word,False)) #If a slot is incorrect, then words with that letter
-#For partially correct guesses
-
-#For correct guesses (ANy word in the word list w/o this letter in is should be removed)
-
-#There is at least one word (guess) that is correct completely
-
-#For each guess, all five letters are in the same row.
-
-
-#If letter (at row col) is correct guess, then that implies all words with the same letter in the same slot will be possible answers
-
+#If the letter is blank then the status must be empty and vice versa
 
 # Build an example full theory for your setting and return it.
 #
