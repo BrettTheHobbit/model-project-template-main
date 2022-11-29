@@ -19,6 +19,7 @@ class BasicPropositions:
 ROW = [1, 2, 3, 4, 5, 6]
 COL = [1, 2, 3, 4, 5]
 STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
+LETTER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
 BOARD = WLR.Wordle_board("words.txt", 15)
 
 PROPOSITIONS = []
@@ -33,9 +34,22 @@ class Unique(object):
     def __str__(self):
         assert False, "You need to define the __str__ function on a proposition class"
 
+
 #Contains the information about a letters location, status and the char representation on the wordle board
+ 
 @proposition(E)
-class Letter: 
+class Slots:
+    def __init__(self, row, col):
+        self.row = row
+        self.col = col
+    
+
+    def __repr__(self):
+        return f"slot({self.row},{self.col})"
+
+#Holds the slot coordinates with it's status (from STATUS)
+@proposition(E)
+class SlotStatus:
     def __init__(self, row, col, status):
         self.row = row
         self.col = col
@@ -43,6 +57,17 @@ class Letter:
 
     def __repr__(self):
         return f"slot({self.row},{self.col})=>{self.status}"
+
+#Holds info about the slot and the letter IN the slot
+@proposition(E)
+class SlotLetter:
+    def __init__(self, row, col, letter):
+        self.row = row
+        self.col = col
+        self.letter = letter
+
+    def __repr__(self):
+        return f"{self.letter} at slot({self.row},{self.col})"
 
 
 @proposition(E)
@@ -63,7 +88,7 @@ class Word:
         return f" The word is: " + str(self.word) + ". Guess status: " + str(self.pos_guess)
 
         
-#CONSTRAINTS
+#BASIC CONSTRAINTS
 
 #For each slot, there is exactly one status applied to it
 for row in ROW:
