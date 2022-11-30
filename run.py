@@ -108,6 +108,24 @@ for row in ROW:
 #ADVANCED CONSTRAINTS
 
 #If the letter is blank then the status must be empty and vice versa
+for row in ROW:
+    for col in COL:
+        E.add_constraint(SlotLetter(row, col, "BLANK") >> SlotStatus(row, col, STATUS[3]))
+
+for row in ROW:
+    for col in COL:
+        E.add_constraint(SlotStatus(row, col, STATUS[3]) >> SlotLetter(row, col, "BLANK"))
+
+
+#SOLVING CONSTRAINTS
+
+#If we run out of letters in letter bank allow duplicate letters 
+
+#IF there are 5 partially correct letter and totally correct letters, start trying to guess the word
+
+#If the letter is not in the correct word,then all words in the wordlist with incorrect letters should be moved
+
+#If the correct letter is in the right position, then remove all words without the correc letter from word list
 
 # Build an example full theory for your setting and return it.
 #
@@ -116,14 +134,14 @@ for row in ROW:
 #  what the expectations are.
 def example_theory():
     # Add custom constraints by creating formulas with the variables you created. 
-    E.add_constraint((a | b) & ~x)
+    #E.add_constraint((a | b) & ~x)
     # Implication
-    E.add_constraint(y >> z)
+    #E.add_constraint(y >> z)
     # Negate a formula
-    E.add_constraint(~(x & y))
+    #E.add_constraint(~(x & y))
     # You can also add more customized "fancy" constraints. Use case: you don't want to enforce "exactly one"
     # for every instance of BasicPropositions, but you want to enforce it for a, b, and c.:
-    constraint.add_exactly_one(E, a, b, c)
+    #constraint.add_exactly_one(E, a, b, c)
 
     return E
 
