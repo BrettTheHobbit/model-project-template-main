@@ -69,13 +69,13 @@ class SlotLetter:
     def __repr__(self):
         return f"{self.letter} at slot({self.row},{self.col})"
 
-
 @proposition(E)
 class Guess:
-    def __init__(self, row, guess, isWord):
+    def __init__(self, row, col, status, letter):
         self.row = row
-        self.guess = guess#Is a collection of five letter classes
-        self.isWord = isWord#is it a word in the wordlist, a guess must match one of the words in the wordlist
+        self.col = col
+        self.status = status
+        self.letter = letter
 
 #Word class, contains a word from the set of possible words and checks if it matches
 @proposition(E)
@@ -105,6 +105,17 @@ for row in ROW:
     for col in COL:
         constraint.add_at_most_one(E, [SlotLetter(row, col, letter) for letter in LETTER])
 
+#Each letter has a position and a status (by adding two constraints, the result should be the intersection of them)
+for row in ROW:
+    for col in COL:
+        for letter in LETTER:
+            constraint.add_at_most_one(E, [Guess(row, col, status, letter) for status in STATUS])
+
+for row in ROW:
+    for col in COL:
+        for status in STATUS:
+            constraint.add_at_most_one(E, [Guess(row, col, status, letter) for letter in LETTER])
+
 #ADVANCED CONSTRAINTS
 
 #If the letter is blank then the status must be empty and vice versa
@@ -116,6 +127,18 @@ for row in ROW:
     for col in COL:
         E.add_constraint(SlotStatus(row, col, STATUS[3]) >> SlotLetter(row, col, "BLANK"))
 
+#If the letter is partial, it is correct in the  one of the other four slots
+for row in ROW:
+    E.add_constraint(SlotStatus(row, 1, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
+    E.add_constraint(SlotStatus(row, 2, STATUS[2]) >> (SlotStatus(row, 1, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
+    E.add_constraint(SlotStatus(row, 3, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 1, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
+    E.add_constraint(SlotStatus(row, 4, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 1, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
+    E.add_constraint(SlotStatus(row, 5, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 1, STATUS[0])))
+
+#If there are five correct letters, then the word is correct
+for row in ROW:
+    word = SlotLetter(row,1,)
+    E.add_constraint((SlotStatus(row, 1, STATUS[0]) & SlotStatus(row, 2, STATUS[0]) & SlotStatus(row, 3, STATUS[0]) & SlotStatus(row, 4, STATUS[0]) & SlotStatus(row, 5, STATUS[0])) >> Word("yes", True))
 
 #SOLVING CONSTRAINTS
 
@@ -125,7 +148,12 @@ for row in ROW:
 
 #If the letter is not in the correct word,then all words in the wordlist with incorrect letters should be moved
 
-#If the correct letter is in the right position, then remove all words without the correc letter from word list
+#If the correct letter is in the right position, then remove all words without the correct letter from word list
+    #Check if the correct letter is in the correct position
+unallowed_words = []
+for row in ROW:
+    for col in COL:
+        E.add_constraint(SlotStatus(row, col, STATUS[0] >> ~(Guess(row, col, STATUS[0], ))))
 
 # Build an example full theory for your setting and return it.
 #
