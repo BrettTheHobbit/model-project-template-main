@@ -20,6 +20,7 @@ ROW = [1, 2, 3, 4, 5, 6]
 COL = [1, 2, 3, 4, 5]
 STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
 LETTER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
+POSSIBLE_LETTER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
 BOARD = WLR.Wordle_board("words.txt", 15)
 
 PROPOSITIONS = []
@@ -137,8 +138,8 @@ for row in ROW:
 
 #If there are five correct letters, then the word is correct
 for row in ROW:
-    word = SlotLetter(row,1,)
-    E.add_constraint((SlotStatus(row, 1, STATUS[0]) & SlotStatus(row, 2, STATUS[0]) & SlotStatus(row, 3, STATUS[0]) & SlotStatus(row, 4, STATUS[0]) & SlotStatus(row, 5, STATUS[0])) >> Word("yes", True))
+    for letter in LETTER:
+        E.add_constraint((Guess(row, 1, STATUS[0], letter) & Guess(row, 2, STATUS[0], letter) & Guess(row, 3, STATUS[0], letter) & Guess(row, 4, STATUS[0], letter) & Guess(row, 5, STATUS[0], letter)) >> Word(Guess(row, 1, STATUS[0], letter).letter + Guess(row, 2, STATUS[0], letter).letter + Guess(row, 3, STATUS[0], letter).letter + Guess(row, 4, STATUS[0], letter).letter + Guess(row, 5, STATUS[0], letter).letter, True))
 
 #SOLVING CONSTRAINTS
 
