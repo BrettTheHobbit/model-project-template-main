@@ -160,7 +160,7 @@ for row in ROW:
     for p in POSSIBLE_LETTER:
         full_word = Guess(row, 1, STATUS[1], p).letter + Guess(row, 2, STATUS[1], p).letter + Guess(row, 3, STATUS[1], p).letter + Guess(row, 4, STATUS[1], p).letter + Guess(row, 5, STATUS[1], p).letter
         E.add_constraint((Guess(row, 1, STATUS[1], p) & Guess(row, 2, STATUS[1], p) & Guess(row, 3, STATUS[1], p) & Guess(row, 4, STATUS[1], p) & Guess(row, 5, STATUS[1], p)) >> Word(full_word, False))
-        if(Guess(full_word, False)== True):
+        if(Word(full_word, False)== True):
             remove_word_list = []
             current_list_size = range(len(guess_list))
             for x in current_list_size:
