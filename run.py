@@ -2,6 +2,7 @@
 from bauhaus import Encoding, proposition, constraint
 from bauhaus.utils import count_solutions, likelihood
 import WLR
+import re
 
 # Encoding that will store all of your constraints
 E = Encoding()
@@ -26,6 +27,7 @@ POSSIBLE_LETTER3 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
 POSSIBLE_LETTER4 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 POSSIBLE_LETTER5 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 BOARD = WLR.Wordle_board("words.txt", 15)
+guess_list = BOARD.get_guess_list()
 
 
 PROPOSITIONS = []
@@ -153,15 +155,37 @@ for row in ROW:
 
 #IF there are 5 partially correct letter and totally correct letters, start trying to guess the word
 
-#If the letter is not in the correct word,then all words in the wordlist with incorrect letters should be moved
-
+#If the letter is not in the correct word,then all words in the wordlist with incorrect letters should be removed
+for row in ROW:
+    for p in POSSIBLE_LETTER:
+        full_word = Guess(row, 1, STATUS[1], p).letter + Guess(row, 2, STATUS[1], p).letter + Guess(row, 3, STATUS[1], p).letter + Guess(row, 4, STATUS[1], p).letter + Guess(row, 5, STATUS[1], p).letter
+        E.add_constraint((Guess(row, 1, STATUS[1], p) & Guess(row, 2, STATUS[1], p) & Guess(row, 3, STATUS[1], p) & Guess(row, 4, STATUS[1], p) & Guess(row, 5, STATUS[1], p)) >> Word(full_word, False))
+        if(Guess(full_word, False)== True):
+            remove_word_list = []
+            current_list_size = range(len(guess_list))
+            for x in current_list_size:
+                if re.search([full_word[0],full_word[1],full_word[2],full_word[3],full_word[4]],x.upper()) == True:
+                    remove_word_list.append(x)
+            guess_list = BOARD.remove_invalid(remove_word_list)
+ 
 #If the correct letter is in the right position, then remove all words without the correct letter from word list
     #Check if the correct letter is in the correct position
+def remove_word(col, letter):
+    remove_word_list = guess_list.copy()
+    for x in range(len(guess_list)):
+        if x[col] == letter:
+            remove_word_list.remove(x)
+    guess_list = BOARD.remove_invalid(remove_word_list)
+
+
 for row in ROW:
     for col in COL:
         for letter in POSSIBLE_LETTER:
             exclusion_list = POSSIBLE_LETTER.copy().remove(letter)
+            #E.add_constraint(SlotStatus(row, col, STATUS[0]) & SlotLetter(row, col letter) >> )
             E.add_constraint(Guess(row, col, STATUS[0], letter) >> ~(Guess(row, col, STATUS[0], exclusion_list)))
+            if(Guess(row, col, STATUS[0], letter) == True):
+                remove_word(col, letter)
 
 # Build an example full theory for your setting and return it.
 #
