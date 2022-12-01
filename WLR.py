@@ -12,6 +12,8 @@ class Wordle_board:
     guess_data - Data table showing letters that are incorrect, partially correct, or correct
     
     guesslist and guesses should logically add up to wordlist
+    
+    letter list is all the letters in guess_list - to be used to make guesses as along there are words with unique letters
     """
     
     
@@ -160,7 +162,8 @@ class Wordle_board:
                 #print(dupe_dict[key])
                 #print(self.guess_data[i].index(key))
                 #print(key in self.guess_data[i])
-                
+        
+        #Updating the letter list        
         x = []
         
         for i in self.guess_list:
@@ -245,6 +248,9 @@ class Wordle_board:
         self.guess_list = self.get_wordlist()
         self.correct_word = 'memes'
     
+    """
+    Checks letter at a position
+    """
     def check_letter(self, y, x):
         x -= 1
         y -= 1
@@ -262,15 +268,17 @@ class Wordle_board:
             return
         
         for i in invalids:
+            print("this "+i)
+            print(type(i))
+            print(i.lower())
             if i in self.guess_list:
                 self.guess_list.remove(i)
+            elif i.lower() in self.guess_list:
+                self.guess_list.remove(i.lower())
+            elif i.upper() in self.guess_list:
+                self.guess_list.remove(i.upper())            
             else:
                 print("not in list")
-    
-    
-    
-    
-    
     
         
 w1 = Wordle_board("words.txt", 15)
@@ -281,8 +289,10 @@ w1.test_case_1()
 #w1.auto_guess(5)
 w1.display()
 print(w1.get_guesses())
-w1.remove_invalid(["kiddo", "memes"])
+print("I AM HERE")
+w1.remove_invalid(["KIDDO", "memes"])
 print(w1.get_wordlist())
 print(w1.get_guess_list())
 print(w1.check_letter(1, 1))
+print(w1.get_letter_list())
 input()
