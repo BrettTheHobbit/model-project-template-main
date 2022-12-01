@@ -27,8 +27,9 @@ POSSIBLE_LETTER4 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
 POSSIBLE_LETTER5 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 BOARD = WLR.Wordle_board("words.txt", 15)
 
-PROPOSITIONS = []
 
+PROPOSITIONS = []
+WRONG_GUESSES = []
 class Unique(object):
     def __hash__(self):
         return hash(str(self))
@@ -108,18 +109,18 @@ for row in ROW:
 #For each slot, there is exactly one letter applied to it
 for row in ROW:
     for col in COL:
-        constraint.add_at_most_one(E, [SlotLetter(row, col, letter) for letter in LETTER])
+        constraint.add_at_most_one(E, [SlotLetter(row, col, letter) for letter in POSSIBLE_LETTER])
 
 #Each letter has a position and a status (by adding two constraints, the result should be the intersection of them)
 for row in ROW:
     for col in COL:
-        for letter in LETTER:
+        for letter in POSSIBLE_LETTER:
             constraint.add_at_most_one(E, [Guess(row, col, status, letter) for status in STATUS])
 
 for row in ROW:
     for col in COL:
         for status in STATUS:
-            constraint.add_at_most_one(E, [Guess(row, col, status, letter) for letter in LETTER])
+            constraint.add_at_most_one(E, [Guess(row, col, status, letter) for letter in POSSIBLE_LETTER])
 
 #ADVANCED CONSTRAINTS
 
