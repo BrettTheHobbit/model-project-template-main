@@ -19,8 +19,12 @@ class BasicPropositions:
 ROW = [1, 2, 3, 4, 5, 6]
 COL = [1, 2, 3, 4, 5]
 STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
-LETTER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
 POSSIBLE_LETTER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
+POSSIBLE_LETTER1 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+POSSIBLE_LETTER2 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+POSSIBLE_LETTER3 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+POSSIBLE_LETTER4 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+POSSIBLE_LETTER5 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 BOARD = WLR.Wordle_board("words.txt", 15)
 
 PROPOSITIONS = []
@@ -130,16 +134,17 @@ for row in ROW:
 
 #If the letter is partial, it is correct in the  one of the other four slots
 for row in ROW:
-    E.add_constraint(SlotStatus(row, 1, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
-    E.add_constraint(SlotStatus(row, 2, STATUS[2]) >> (SlotStatus(row, 1, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
-    E.add_constraint(SlotStatus(row, 3, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 1, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
-    E.add_constraint(SlotStatus(row, 4, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 1, STATUS[0]) | SlotStatus(row, 5, STATUS[0])))
-    E.add_constraint(SlotStatus(row, 5, STATUS[2]) >> (SlotStatus(row, 2, STATUS[0]) | SlotStatus(row, 3, STATUS[0]) | SlotStatus(row, 4, STATUS[0]) | SlotStatus(row, 1, STATUS[0])))
+    for p in POSSIBLE_LETTER:
+        E.add_constraint(Guess(row, 1, STATUS[2], p) >> (Guess(row, 2, STATUS[0], p) | Guess(row, 3, STATUS[0], p) | Guess(row, 4, STATUS[0], p) | Guess(row, 5, STATUS[0], p)))
+        E.add_constraint(Guess(row, 2, STATUS[2], p) >> (Guess(row, 1, STATUS[0], p) | Guess(row, 3, STATUS[0], p) | Guess(row, 4, STATUS[0], p) | Guess(row, 5, STATUS[0], p)))
+        E.add_constraint(Guess(row, 3, STATUS[2], p) >> (Guess(row, 2, STATUS[0], p) | Guess(row, 1, STATUS[0], p) | Guess(row, 4, STATUS[0], p) | Guess(row, 5, STATUS[0], p)))
+        E.add_constraint(Guess(row, 4, STATUS[2], p) >> (Guess(row, 2, STATUS[0], p) | Guess(row, 3, STATUS[0], p) | Guess(row, 1, STATUS[0], p) | Guess(row, 5, STATUS[0], p)))
+        E.add_constraint(Guess(row, 5, STATUS[2], p) >> (Guess(row, 2, STATUS[0], p) | Guess(row, 3, STATUS[0], p) | Guess(row, 4, STATUS[0], p) | Guess(row, 1, STATUS[0], p)))
 
 #If there are five correct letters, then the word is correct
 for row in ROW:
-    for letter in LETTER:
-        E.add_constraint((Guess(row, 1, STATUS[0], letter) & Guess(row, 2, STATUS[0], letter) & Guess(row, 3, STATUS[0], letter) & Guess(row, 4, STATUS[0], letter) & Guess(row, 5, STATUS[0], letter)) >> Word(Guess(row, 1, STATUS[0], letter).letter + Guess(row, 2, STATUS[0], letter).letter + Guess(row, 3, STATUS[0], letter).letter + Guess(row, 4, STATUS[0], letter).letter + Guess(row, 5, STATUS[0], letter).letter, True))
+    for p in POSSIBLE_LETTER:
+        E.add_constraint((Guess(row, 1, STATUS[0], p) & Guess(row, 2, STATUS[0], p) & Guess(row, 3, STATUS[0], p) & Guess(row, 4, STATUS[0], p) & Guess(row, 5, STATUS[0], p)) >> Word(Guess(row, 1, STATUS[0], p).letter + Guess(row, 2, STATUS[0], p).letter + Guess(row, 3, STATUS[0], p).letter + Guess(row, 4, STATUS[0], p).letter + Guess(row, 5, STATUS[0], p).letter, True))
 
 #SOLVING CONSTRAINTS
 
@@ -151,10 +156,11 @@ for row in ROW:
 
 #If the correct letter is in the right position, then remove all words without the correct letter from word list
     #Check if the correct letter is in the correct position
-unallowed_words = []
 for row in ROW:
     for col in COL:
-        E.add_constraint(SlotStatus(row, col, STATUS[0] >> ~(Guess(row, col, STATUS[0], ))))
+        for letter in POSSIBLE_LETTER:
+            exclusion_list = POSSIBLE_LETTER.copy().remove(letter)
+            E.add_constraint(Guess(row, col, STATUS[0], letter) >> ~(Guess(row, col, STATUS[0], exclusion_list)))
 
 # Build an example full theory for your setting and return it.
 #
