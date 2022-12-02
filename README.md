@@ -15,38 +15,10 @@ You win the game if you can guess the word within six guesses.
 Tests the final output of the program (came with the standard class template).
 
 ### WLR.py
-The file for word solving  given an example set of words
-#### init
-initializes the board for the wordle game
-#### data
-Compiles the data of the guesses and returns none if there are no guesses
-#### display
-Displays data and returns none if there is no data
-#### make_guess
-Makes a specific guess with a single string input
-#### get_wordlist
-Returns a list for wordlist
-#### get_correct_word
-Returns a String as correct word
-#### get_guesses
-Returns a list for guesses
-#### get_guess_list
-Returns a list for guess list
-#### get_guess_data
-Returns a 2d list for data
-#### get_letter_list
-Returns a list of letters
-#### test_case_1
-Gives an example case that can be tested
-#### check_letter
-Checks letter at a position to see if it's empty
-#### remove_invalid
-Takes in array of strings (invalid words) and removes from guess_list (of possible words)
+The file for solving an example problem by elimination words from the wordlist, given an example set of words.
 
 ### run.py
-Attempts to calculate the solution to the wordle problem.
-#### wordle_theory
-Adds the constraints to the encoding, returns the encoding after adding said constraints
+Attempts to calculate the solution to the wordle problem using propositions and constraints.
 
 ## Structure
 
