@@ -268,9 +268,7 @@ class Wordle_board:
             return
         
         for i in invalids:
-            print("this "+i)
-            print(type(i))
-            print(i.lower())
+            print("Removed "+i.lower())
             if i in self.guess_list:
                 self.guess_list.remove(i)
             elif i.lower() in self.guess_list:
@@ -289,10 +287,8 @@ w1.test_case_1()
 #w1.auto_guess(5)
 w1.display()
 print(w1.get_guesses())
-print("I AM HERE")
 w1.remove_invalid(["KIDDO", "memes"])
 print(w1.get_wordlist())
 print(w1.get_guess_list())
 print(w1.check_letter(1, 1))
 print(w1.get_letter_list())
-input()

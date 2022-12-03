@@ -20,8 +20,10 @@ class BasicPropositions:
 ROW = [1, 2, 3, 4, 5, 6]
 COL = [1, 2, 3, 4, 5]
 STATUS = ["CORRECT", "INCORRECT", "PARTIAL", "EMPTY"]
-POSSIBLE_LETTER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " "]
+POSSIBLE_LETTER = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 BOARD = WLR.Wordle_board("words.txt", 15)
+BOARD.test_case_1()
+print(BOARD.get_correct_word())
 
 
 
@@ -100,7 +102,7 @@ def wordle_theory():
    #Adds constraints
 #BASIC CONSTRAINTS 
     guessed_list = BOARD.get_guess_list()
-    print("guess list idk" + str(guessed_list))
+    print("guess list" + str(guessed_list))
 
     if(len(guessed_list) > 1):
 #Each row maps to every column
@@ -157,45 +159,55 @@ def wordle_theory():
         #If we run out of letters in letter bank allow duplicate letters 
 
         #IF there are 5 partially correct letter and totally correct letters, start trying to guess the word
-
-        #If the letter is not in the correct word,then all words in the wordlist with incorrect letters should be removed
+        #for row in ROW:
+         #   E.add_constraint(((Guess(row, 1, STATUS[0], word[0]) | Guess(row,1,STATUS[2], word[0])) & (Guess(row, 2, STATUS[0], word[0]) | Guess(row,2,STATUS[2], word[0]))  & (Guess(row, 3, STATUS[0], word[0]) | Guess(row,3,STATUS[2], word[0])) & (Guess(row, 4, STATUS[0], word[0]) | Guess(row,4,STATUS[2], word[0])) & (Guess(row, 5, STATUS[0], word[0]) | Guess(row,5,STATUS[2], word[0]))) >> Word(word, True))
+          #  if (Word(word, True)):
+           #     BOARD.make_guess(word)
+        
         #If the letter is not in the correct word,then all words in the wordlist with incorrect letters should be removed
         for row in ROW:
             for word in guessed_list:
                 E.add_constraint((Guess(row, 1, STATUS[1], word[0]) & Guess(row, 2, STATUS[1], word[1]) & Guess(row, 3, STATUS[1], word[2]) & Guess(row, 4, STATUS[1], word[3]) & Guess(row, 5, STATUS[1], word[4])) >> Word(word, False))
-                if(Word(word, False)== True):
+                if(Word(word, False).pos_guess == False):
                     remove_word_list = []
-                    current_list_size = range(len(guessed_list))
-                    for x in current_list_size:
-                        if re.search([word[0],word[1],word[2],word[3],word[4]],x.upper()) == True:
+                    for x in guessed_list:
+                        if (x.find(word[0]) > -1 | x.find(word[1]) > -1 | x.find(word[2]) > -1 | x.find(word[3]) > -1 | x.find(word[4]) > -1):
                             remove_word_list.append(x)
+                            print("removed by the all letters wrong ^")
                     BOARD.remove_invalid(remove_word_list)
                     guessed_list = BOARD.get_guess_list()
         #If the correct letter is in the right position, then remove all words without the correct letter from word list
             #Check if the correct letter is in the correct position
-        def remove_word(col, letter):
-            remove_word_list = guessed_list.copy()
-            for x in range(len(guessed_list)):
-                if x[col] == letter:
-                    remove_word_list.remove(x)
+        def remove_word(col, letter, word):
+            guessed_list = BOARD.get_guess_list()
+            remove_word_list = []
+            for x in guessed_list:
+                if x[col-1] != letter:
+                    print(x +" was removed by remove word func as " + x[col-1] + " is not equal to " + letter + " the right word is also " + word)
+                    remove_word_list.append(x)
             BOARD.remove_invalid(remove_word_list)
             guessed_list = BOARD.get_guess_list()
 
 
         for row in ROW:
             for col in COL:
-                for letter in POSSIBLE_LETTER:
-                    exclusion_list = POSSIBLE_LETTER.copy().remove(letter)
-                    #E.add_constraint(SlotStatus(row, col, STATUS[0]) & SlotLetter(row, col letter) >> )
-                    E.add_constraint(Guess(row, col, STATUS[0], letter) >> ~(Guess(row, col, STATUS[0], exclusion_list)))
-                    if(Guess(row, col, STATUS[0], letter) == True):
-                        remove_word(col, letter)
+                for word in guessed_list:
+                    exclusion_list = POSSIBLE_LETTER.copy().remove(word[col-1])
+                    E.add_constraint(Guess(row, col, STATUS[0], word[col - 1]) >> ~(Guess(row, col, STATUS[0], exclusion_list)))
+                    if(Guess(row, col, STATUS[0], word[col-1]).status == STATUS[0]):
+                        remove_word(col, word[col-1], word)
+                    
     else:
+        print("")
+        print(BOARD.get_correct_word())
+        BOARD.make_guess(guessed_list[0])
+        print(str(guessed_list))
         return E
 
 
-if __name__ == "__main__":
-    T = wordle_theory()
+if __name__  == "__main__":
+    T = wordle_theory() 
+
     # Don't compile until you're finished adding all your constraints!
     T = E.compile()
     # After compilation (and only after), you can check some of the properties
