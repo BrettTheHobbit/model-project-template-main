@@ -4,11 +4,21 @@ Our project uses a logical model to determine the possible answers left in a wor
 
 ## Wordle Rules
 
-Wordle is an online guessing game in which you want to guess a selected five letter word within five guess.
+Wordle is an online guessing game in which you want to guess a selected five letter word from a wordbank within six guesses.
 
 For every guess, information is returned back to the player, telling the player if the letter is incorrect (shown in gray), if the letter is in the word but in the wrong spot (shown in yellow) and if a letter is in the wrod in the right spot (shown in green).
 
 You win the game if you can guess the word within six guesses.
+
+## Files
+### test.py
+Tests the final output of the program (came with the standard class template).
+
+### WLR.py
+The file for solving an example problem by elimination words from the wordlist, given an example set of words.
+
+### run.py
+Attempts to calculate the solution to the wordle problem using propositions and constraints.
 
 ## Structure
 
